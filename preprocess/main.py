@@ -24,34 +24,36 @@ def get_gene_columns(df):
 
 
 if __name__ == '__main__':
+    # load input CSV file
     df = pd.read_csv('./gene_presence_absence.csv')
-
     col_lst = [col for col in list(df) if ".fna" in str(col)]
-    # col_lst.insert(0, list(df)[0])
+
     data = df.fillna(value=0)
     data.replace('^[a-zA-Z0-9_\t]{13,}$', 1, inplace=True, regex=True)
     data.sort_values(by='Gene', inplace=True, key=lambda col: col.str.lower())
+    # generate pre-processed CSV file
     data.to_csv('output.csv', columns=col_lst, index=False)
 
     # load CSV file
     df = pd.read_csv("./output.csv")
+
     # drop column 'Gene'
     # df = df.drop('Gene', axis=1)
 
+    # group genes in 4
     gene_cols = get_gene_columns(df)
     col_num = 0
-
     for col in gene_cols:
         df = pd.read_csv("./output.csv", usecols=col)
-        df = df.astype(bool)
-
+        df = df.astype(bool)  # tailor for from_indicators()
         # for testing
+
         # print(type(df))
         # print(df.shape)
         # print(df)
 
-        # fig = plt.figure(figsize=(12, 6))
-        upset.plot(upset.from_indicators(df), min_subset_size=100, show_percentages=True, show_counts='%d', subset_size='count', sort_by='cardinality')
+        upset.plot(upset.from_indicators(df), min_subset_size=100, show_percentages=True, show_counts='%d',
+                   subset_size='count', sort_by='cardinality')
 
         figName = f"Fig_{col_num}.png"
         plt.savefig(figName)
