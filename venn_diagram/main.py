@@ -1,11 +1,14 @@
 import csv
 import sys
+
+from matplotlib import pyplot as plt
+
 import venn
 
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib_venn import venn2, venn3, venn2_circles
+# import numpy as np
+import matplotlib.pyplot as plt43
+# from matplotlib_venn import venn2, venn3, venn2_circles
 import matplotlib.image as mpimg  # for img reading
 
 
@@ -82,13 +85,19 @@ def draw_venn4_by_group(p_cols: list, **opts):
     plt.clf()
     # venn_fig = mpimg.imread(fig_name)
 
-    # plt.imshow(venn_fig)  # 显示图片
-    plt.axis('off')  # 不显示坐标轴
+    # plt.imshow(venn_fig)
+    plt.axis('off')
     # plt.show()
 
 
 # 从外面传的labelDict是一个[[], [], [], []]，每一个[]是column name，作为一个子图ax，坐标分别是221 222 223 224
+
 def draw_4venn4_together(p_2dlst, **options):
+    """
+    Show the 4 Venn diagrams together(4 ax in 1 fig)
+    :param p_2dlst: 2-d list indicates the column names(1d lst) in each Venn diagram
+    :return: A 2-d list, each element representing a set of 4 genes
+    """
     colors = options.get('colors', [venn.default_colors[i] for i in range(4)])
     figsize = options.get('figsize', (14, 14))
     dpi = options.get('dpi', 96)
@@ -144,9 +153,9 @@ if __name__ == '__main__':
     FileName = "p16-G30.csv"
     df = pd.read_csv(f"./{FileName}")
 
-    p_g_lst = []  # [[person#, 携带gene总数],...]
+    p_g_lst = []  # [[person#, gene#],...]
     for idx, person in enumerate(df):
-        # 不要gene_name那一列
+        # ignore gene_name
         if idx == 0:
             continue
         p_lst = [i for i in df[person]]
@@ -155,7 +164,7 @@ if __name__ == '__main__':
     # sort person by gene_num in ↑ order
     p_g_lst.sort(key=lambda x: x[1], reverse=True)
 
-    # 只要column, 每组4个，一共len(p_g_lst)/4组
+    # Four columns in one group, four groups in total
     p_groups = [[p_g_lst[i + j * 4][0] for i in range(0, 4)] for j in range(0, int(len(p_g_lst) / 4))]
     print("after sorting:")
     print(p_groups)
@@ -171,5 +180,5 @@ if __name__ == '__main__':
     fig_all.savefig('venn_all.png', bbox_inches='tight')
     venn_fig_all = mpimg.imread('venn_all.png')
 
-    plt.imshow(venn_fig_all)  # 显示图片
-    plt.axis('off')  # 不显示坐标轴
+    # plt.imshow(venn_fig_all)
+    # plt.axis('off')
